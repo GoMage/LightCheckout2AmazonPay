@@ -17,6 +17,10 @@ class CheckoutProcessor
      */
     protected $configProvider;
 
+    protected $shippingConfig;
+    protected $paymentConfig;
+    protected $sidebarConfig;
+
     /**
      * CheckoutProcessor constructor.
      *
@@ -41,28 +45,49 @@ class CheckoutProcessor
      */
     public function afterProcess(LayoutProcessor $processor, $jsLayout)
     {
-        $shippingConfig = &$jsLayout['components']['checkout']['children']['shippingAddress'];
-        $paymentConfig = &$jsLayout['components']['checkout']['children']['payment'];
-        $sidebarConfig = &$jsLayout['components']['checkout']['children']['sidebar']['children']['placeOrderButtonAfter']['children'];
-        $emailConfig =  &$jsLayout['components']['checkout']['children']['customer-email'];
+        $this->shippingConfig = &$jsLayout['components']['checkout']['children']['shippingAddress'];
+        $this->paymentConfig = &$jsLayout['components']['checkout']['children']['payment'];
+        $this->sidebarConfig = &$jsLayout['components']['checkout']['children']['sidebar']['children']['placeOrderButtonAfter']['children'];
+        $this->emailConfig =  &$jsLayout['components']['checkout']['children']['customer-email'];
+        
+        if ($this->processAmazonEnabled()) {
+            $this->processAmazomButtonPosition();
+        }
+        return $jsLayout;
+    }
 
+    protected function processAmazonEnabled()
+    {
         if ($this->amazonHelper->isPwaEnabled()
             && $this->configProvider->isAmazonIntegrationEnabled()
         ) {
-            $shippingConfig['component'] = 'GoMage_LCAmazonPay/js/view/shipping';
-            $emailConfig['component'] = 'GoMage_LCAmazonPay/js/view/form/element/email';
-            $shippingConfig['children']['address-list']['component'] = 'Amazon_Payment/js/view/shipping-address/list';
-            $shippingConfig['children']['shipping-address-fieldset']['children']
+            $this->shippingConfig['component'] = 'GoMage_LCAmazonPay/js/view/shipping';
+            $this->emailConfig['component'] = 'GoMage_LCAmazonPay/js/view/form/element/email';
+            $this->shippingConfig['children']['address-list']['component'] = 'Amazon_Payment/js/view/shipping-address/list';
+            $this->shippingConfig['children']['shipping-address-fieldset']['children']
             ['inline-form-manipulator']['component'] = 'Amazon_Payment/js/view/shipping-address/inline-form';
-            $paymentConfig['children']['payments-list']['component'] = 'GoMage_LCAmazonPay/js/view/payment/list';
-        } else {
-            unset($sidebarConfig['amazon-button-region']);
-            unset($shippingConfig['children']['before-form']['children']['amazon-widget-address']);
-            unset($paymentConfig['children']['renders']['children']['amazon_payment']);
-            unset($paymentConfig['children']['beforeMethods']['children']['amazon-sandbox-simulator']);
-            unset($paymentConfig['children']['payments-list']['children']['amazon_payment-form']);
-        }
+            $this->paymentConfig['children']['payments-list']['component'] = 'GoMage_LCAmazonPay/js/view/payment/list';
 
-        return $jsLayout;
+            return true;
+        } else {
+            unset($this->sidebarConfig['amazon-button-region']);
+            unset($this->shippingConfig['children']['before-form']['children']['amazon-widget-address']);
+            unset($this->paymentConfig['children']['renders']['children']['amazon_payment']);
+            unset($this->paymentConfig['children']['beforeMethods']['children']['amazon-sandbox-simulator']);
+            unset($this->paymentConfig['children']['payments-list']['children']['amazon_payment-form']);
+
+            return false;
+        }
     }
+
+    protected function processAmazomButtonPosition()
+    {
+        if ($this->configProvider->displayInPaymentMethodsList()) {
+            unset($this->sidebarConfig['amazon-button-region']['children']['amazon-button']);
+        } else {
+            unset($this->paymentConfig['children']['renders']['children']['amazon_payment']);
+        }
+    }
+
+
 }

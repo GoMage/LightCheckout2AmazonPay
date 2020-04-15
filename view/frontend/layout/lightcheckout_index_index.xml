@@ -142,7 +142,7 @@
                                             <!-- merge payment method renders here -->
                                             <item name="children" xsi:type="array">
                                                 <item name="amazon_payment" xsi:type="array">
-                                                    <item name="component" xsi:type="string">Amazon_Payment/js/view/payment/amazon-pay</item>
+                                                    <item name="component" xsi:type="string">GoMage_LCAmazonPay/js/view/payment/amazon-pay</item>
                                                     <item name="config" xsi:type="array">
                                                         <item name="tooltip" xsi:type="string" translate="true">Are you an Amazon customer? Pay now with address and payment details stored in your Amazon account.</item>
                                                     </item>
