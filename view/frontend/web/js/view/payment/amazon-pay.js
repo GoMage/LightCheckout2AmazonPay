@@ -1,17 +1,19 @@
 define([
     'uiComponent',
-    'Magento_Checkout/js/model/payment/renderer-list'
+    'Magento_Checkout/js/model/payment/renderer-list',
+    'Amazon_Payment/js/model/storage'
 
 ], function (
     Component,
-    rendererList
+    rendererList,
+    amazonStorage
 ) {
     'use strict';
 
     rendererList.push(
         {
             type: 'amazon_payment',
-            component: 'Amazon_Payment/js/view/checkout-button'
+            component: 'GoMage_LCAmazonPay/js/view/payment/amazon-payment-widget'
         }
     );
 

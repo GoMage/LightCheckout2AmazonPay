@@ -33,7 +33,9 @@ define(
                 amazonStorage.isAmazonAccountLoggedIn.subscribe(function (value) {
                     this.isNewAddressAdded(value);
                 }, this);
-
+                if (amazonStorage.isAmazonAccountLoggedIn()) {
+                    this.addressOptions = [];
+                }
                 return this;
             },
 
@@ -53,27 +55,11 @@ define(
              */
             setShippingInformation: function () {
 
-                /**
-                 * Set Amazon shipping info
-                 */
-                function setShippingInformationAmazon() {
-                    setShippingInformationAction().done(
-                        function () {
-                            stepNavigator.next();
-                        }
-                    );
-                }
-
-                if (amazonStorage.isAmazonAccountLoggedIn() && customer.isLoggedIn()) {
-                    setShippingInformationAmazon();
-                } else if (amazonStorage.isAmazonAccountLoggedIn() && !customer.isLoggedIn()) {
-
-                    if (this.validateGuestEmail()) {
-                        setShippingInformationAmazon();
-                    }
-                    //if using guest checkout or guest checkout with amazon pay we need to use the main validation
-                } else if (this.validateShippingInformation()) {
-                    setShippingInformationAmazon();
+            },
+            afterRenderShipping: function () {
+                if (amazonStorage.isAmazonAccountLoggedIn()) {
+                    $('#shipping').show();
+                    $('.glc-billing-address').hide();
                 }
             }
         });

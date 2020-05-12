@@ -29,6 +29,11 @@ class CheckoutConfigProvider
         return $this->scopeConfig->getValue(self::XML_PATH_LIGHT_CHECKOUT_AMAZON_INTEGRATION_ENABLED);
     }
 
+    public function isLightCheckoutEnabled()
+    {
+        return (int)$this->scopeConfig->getValue(\GoMage\LightCheckout\Model\Config\CheckoutConfigurationsProvider::XML_PATH_LIGHT_CHECKOUT_GENERAL_IS_ENABLED);
+    }
+
     public function displayInPaymentMethodsList()
     {
         return (int)$this->scopeConfig->getValue(self::XML_PATH_LIGHT_CHECKOUT_AMAZON_DISPLAY_IN_PAYMENT_LIST);

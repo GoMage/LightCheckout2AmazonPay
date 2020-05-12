@@ -58,8 +58,11 @@ class CheckoutProcessor
 
     protected function processAmazonEnabled()
     {
-        if ($this->amazonHelper->isPwaEnabled()
+        if (
+            $this->configProvider->isLightCheckoutEnabled()
             && $this->configProvider->isAmazonIntegrationEnabled()
+            && $this->amazonHelper->isPwaEnabled()
+
         ) {
             $this->shippingConfig['component'] = 'GoMage_LCAmazonPay/js/view/shipping';
             $this->emailConfig['component'] = 'GoMage_LCAmazonPay/js/view/form/element/email';
@@ -84,10 +87,9 @@ class CheckoutProcessor
     {
         if ($this->configProvider->displayInPaymentMethodsList()) {
             unset($this->sidebarConfig['amazon-button-region']['children']['amazon-button']);
+            $this->paymentConfig['children']['renders']['children']['amazon_payment']['component'] = 'GoMage_LCAmazonPay/js/view/payment/amazon-pay';
         } else {
             unset($this->paymentConfig['children']['renders']['children']['amazon_payment']);
         }
     }
-
-
 }
